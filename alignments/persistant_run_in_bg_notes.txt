@@ -1,0 +1,30 @@
+# Create a systemd service file at /etc/systemd/system/flask_app.service
+# I'm not totally certain, but I think every path MUST be a global path. I couldn't get short paths to work.
+[Unit]
+Description=MMSEQS@Flask Alignment App
+After=network.target
+
+[Service]
+User=csnow
+WorkingDirectory=/home/csnow/alignments/
+ExecStart=/bin/bash -c "source /home/csnow/miniforge3/etc/profile.d/conda.sh && conda activate flask && python /home/csnow/alignments/flask_app.py"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+# Local test - can we see the app ourselves as the host?
+curl -X POST -F "fasta=@example.fasta"  http://localhost:24624/run_alignment
+
+# Restart the host system
+sudo systemctl daemon-reload
+sudo systemctl restart flask_app.service
+
+# Check to make sure the app is running without any errors
+sudo systemctl status flask_app.service
+
+# The directory ./tmp is REQUIRED - this is where jobs are physically ran. 
+# The flask_app.py is what's being run in the background and is used as the connection point between the world and us here in rime.
+# mmseqs_alignment.sh is the script that actually does the alignments. This is executed by flask_app.py
+# connect_history.log is my best attempt at logging who connects to us when
+# run.log is all the output and "gunk" that mmseqs generates when it runs
