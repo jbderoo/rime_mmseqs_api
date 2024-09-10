@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Check for help argument or no arguments
+if [[ "$1" == "-h" || "$1" == "--help" || $# -lt 2 ]]; then
+    echo "Usage: rime_msa <fasta_file> <output_dir>"
+    echo "Example: rime_msa input.fasta results_dir"
+    echo 
+    echo "Arguments:"
+    echo "  <fasta_file>   Path to the input FASTA file"
+    echo "  <output_dir>   Directory where the results will be extracted"
+    echo
+    echo "Set up help:"
+    echo "1) Make sure you do give this file the correct persmissions. You can do that with the following command"
+    echo "chmod 775 rime_mmseqs" 
+    echo "2) Add this file's directory to your path. If you want it here, copy-paste this line to your bashrc file: "
+    echo "export PATH=$(pwd):\$PATH"
+    echo
+    echo "Description:"
+    echo "This function uploads a FASTA file to Rime for MSA generation and downloads the results."
+    echo "input.fasta can *and should* have multiple sequences in the single fasta - this is VERY efficent!"
+    echo 
+    exit 0
+fi
+
+fasta_file=$1
+output_dir=$2
+
+red=$'\e[31m' 
+none=$'\e[0m'  
+
+if [ -e ./result.zip ]; then
+    echo -e "${red}Warning: result.zip detected! Changed name to result.backup.jderoo123changeme.zip ${none}"
+    mv result.zip result.backup.jderoo123changeme.zip
+fi
+
+
+curl -X POST -F "fasta=@$fasta_file" http://rime.engr.colostate.edu:24624/run_alignment --output result.zip
+
+
+if [ ! -e ./result.zip ]; then
+    echo -e "${red}Warning: api call failed. Try again later, or ask Chris to investigate ${none}"
+else
+    unzip result.zip -d $output_dir
+    rm result.zip
+fi
+
