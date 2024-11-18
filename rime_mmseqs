@@ -33,8 +33,8 @@ if [ -e ./result.zip ]; then
     mv result.zip result.backup.jderoo123changeme.zip
 fi
 
-
-curl -X POST -F "fasta=@$fasta_file" http://rime.engr.colostate.edu:24624/run_alignment --output result.zip
+PORT_NUMBER=12345
+curl -X POST -F "fasta=@$fasta_file" http://rime.engr.colostate.edu:${PORT_NUMBER}/run_alignment --output result.zip
 
 
 if [ ! -e ./result.zip ]; then
