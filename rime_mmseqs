@@ -2,8 +2,8 @@
 
 # Check for help argument or no arguments
 if [[ "$1" == "-h" || "$1" == "--help" || $# -lt 2 ]]; then
-    echo "Usage: rime_msa <fasta_file> <output_dir>"
-    echo "Example: rime_msa input.fasta results_dir"
+    echo "Usage: rime_mmseqs <fasta_file> <output_dir>"
+    echo "Example: rime_mseqs input.fasta results_dir"
     echo 
     echo "Arguments:"
     echo "  <fasta_file>   Path to the input FASTA file"
@@ -33,8 +33,15 @@ if [ -e ./result.zip ]; then
     mv result.zip result.backup.jderoo123changeme.zip
 fi
 
-PORT_NUMBER=24624
+if [ -d "$2" ]; then
+    echo -e "${red}Error: The directory '$2' already exists. Exiting without running.${none}"
+    exit 1
+fi
+
+
+PORT_NUMBER=12345 # change me! Ask Dr. Snow for the real port number (added layer of security)
 curl -X POST -F "fasta=@$fasta_file" http://rime.engr.colostate.edu:${PORT_NUMBER}/run_alignment --output result.zip
+
 
 
 if [ ! -e ./result.zip ]; then
