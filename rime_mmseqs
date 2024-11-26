@@ -10,7 +10,7 @@ if [[ "$1" == "-h" || "$1" == "--help" || $# -lt 2 ]]; then
     echo "  <output_dir>   Directory where the results will be extracted"
     echo
     echo "Set up help:"
-    echo "1) Make sure you do give this file the correct persmissions. You can do that with the following command"
+    echo "1) Make sure you do give this file the correct permissions. You can do that with the following command"
     echo "chmod 775 rime_mmseqs" 
     echo "2) Add this file's directory to your path. If you want it here, copy-paste this line to your bashrc file: "
     echo "export PATH=$(pwd):\$PATH"
@@ -33,14 +33,14 @@ if [ -e ./result.zip ]; then
     mv result.zip result.backup.jderoo123changeme.zip
 fi
 
-PORT_NUMBER=12345
+PORT_NUMBER=24624
 curl -X POST -F "fasta=@$fasta_file" http://rime.engr.colostate.edu:${PORT_NUMBER}/run_alignment --output result.zip
 
 
 if [ ! -e ./result.zip ]; then
     echo -e "${red}Warning: api call failed. Try again later, or ask Chris to investigate ${none}"
 else
-    unzip result.zip -d $output_dir
+    unzip -o result.zip -d $output_dir
     rm result.zip
 fi
 
